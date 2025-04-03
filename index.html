@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>University Application Form</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            margin: 0;
+            padding: 20px;
+        }
+        .form-container {
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 18px;
+        }
+        label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: bold;
+        }
+        input, select, button {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        input:disabled, select:disabled {
+            background-color: #e9e9e9;
+        }
+        .resume-upload {
+            margin-top: 10px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:disabled {
+            background-color: #aaa;
+            cursor: not-allowed;
+        }
+        .error {
+            color: red;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+        #recaptcha-container {
+            margin-top: 10px;
+            margin-bottom: 10px;
+        }
+        .otp-section {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <h2>University Application Form</h2>
+    <form id="teacherForm" enctype="multipart/form-data">
+        <!-- Name Field -->
+        <div class="form-group">
+            <label for="name">Name:</label>
+            <input type="text" id="name" name="name" required>
+        </div>
+
+        <!-- Email Field -->
+        <div class="form-group">
+            <label for="email">Email:</label>
+            <input type="email" id="email" name="email" required>
+        </div>
+
+        <!-- Phone Number and OTP Verification -->
+        <div class="form-group">
+            <label for="phone">Phone Number (Format: +1234567890):</label>
+            <input type="tel" id="phone" name="phone" required>
+            <button type="button" onclick="sendOTP()">Send OTP</button>
+            <div id="recaptcha-container"></div>
+        </div>
+
+        <div id="otpSection" class="form-group otp-section" style="display:none;">
+            <label for="otp">Enter OTP:</label>
+            <input type="text" id="otp" placeholder="Enter OTP" required>
+            <button type="button" onclick="verifyOTP()">Verify OTP</button>
+            <p id="otpError" class="error"></p>
+        </div>
+
+      
+<div class="form-group">
+    <label for="university">Your Last Fully Completed qualification</label>
+    <select id="university" name="university" required>
+       
+<option disabled selected>Select your last completed qualification</option>
+<option value="High School / Secondary School (Grade 10)">High School / Secondary School (Grade 10)</option>
+<option value="Higher Secondary / Senior Secondary / A-Levels (Grade 12)">Higher Secondary / Senior Secondary / A-Levels (Grade 12)</option>
+<option value="Diploma / Vocational Certificate (Post-Secondary)">Diploma / Vocational Certificate (Post-Secondary)</option>
+<option value="Associate Degree / Foundation Year">Associate Degree / Foundation Year</option>
+<option value="Bachelor’s Degree (e.g., BA, BSc, BBA, BCom, BTech)">Bachelor’s Degree (e.g., BA, BSc, BBA, BCom, BTech)</option>
+<option value="Postgraduate Diploma / Advanced Diploma">Postgraduate Diploma / Advanced Diploma</option>
+<option value="Master’s Degree (e.g., MA, MSc, MBA, MTech)">Master’s Degree (e.g., MA, MSc, MBA, MTech)</option>
+<option value="Doctoral Degree (PhD or equivalent)">Doctoral Degree (PhD or equivalent)</option>
+
+
+
+    </select>
+</div>
+
+       <div class="form-group">
+    <label for="course">Select Your Course:</label>
+    <select id="course" name="course" required>
+        <option value="" disabled selected>Select Your Course</option>
+       
+  <optgroup label="Jain University, Bangalore (NAAC A++)">
+    <option value="MBA - Banking & Finance">MBA - Banking & Finance</option>
+    <option value="BBA - HRM">BBA - HRM</option>
+    <option value="BBA - Finance">BBA - Finance</option>
+    <option value="BBA - Marketing">BBA - Marketing</option>
+    <option value="BBA - Engineering and Project Management">BBA - Engineering and Project Management</option>
+    <option value="B.Com - International Finance & Accounting">B.Com - International Finance & Accounting</option>
+    <option value="B.Com - Accounting & Finance">B.Com - Accounting & Finance</option>
+    <option value="B.Com - Corporate Accounting">B.Com - Corporate Accounting</option>
+  </optgroup>
+
+  <optgroup label="Chandigarh University, Punjab">
+    <option value="M.Com - International Finance">M.Com - International Finance</option>
+    <option value="MBA - Human Resource Management">MBA - Human Resource Management</option>
+    <option value="MBA - Finance">MBA - Finance</option>
+    <option value="MBA - Marketing">MBA - Marketing</option>
+    <option value="MBA - General Management">MBA - General Management</option>
+    <option value="MBA - Systems & Operations Management">MBA - Systems & Operations Management</option>
+    <option value="MBA - International Business Management">MBA - International Business Management</option>
+    <option value="MBA - Finance & Marketing">MBA - Finance & Marketing</option>
+    <option value="MBA - HRM & Finance">MBA - HRM & Finance</option>
+  </optgroup>
+
+  <optgroup label="D.Y. Patil University, Nerul, Mumbai">
+    <option value="MBA - Marketing & HRM">MBA - Marketing & HRM</option>
+    <option value="MBA - Project Management">MBA - Project Management</option>
+    <option value="MBA - IT Management">MBA - IT Management</option>
+    <option value="MBA - Healthcare Management">MBA - Healthcare Management</option>
+    <option value="MBA - Entrepreneurship & Leadership">MBA - Entrepreneurship & Leadership</option>
+    <option value="MBA - Logistics & Supply Chain Management">MBA - Logistics & Supply Chain Management</option>
+    <option value="MBA - Business Intelligence & Analytics">MBA - Business Intelligence & Analytics</option>
+    <option value="MBA - International Finance">MBA - International Finance</option>
+    <option value="MCA - Computer Science & IT">MCA - Computer Science & IT</option>
+    <option value="MCA - Data Analytics">MCA - Data Analytics</option>
+    <option value="MCA - Cyber Security">MCA - Cyber Security</option>
+  </optgroup>
+
+  <optgroup label="KIIT University, Bhubaneswar, Odisha">
+    <option value="MA - English">MA - English</option>
+    <option value="MA - Economics">MA - Economics</option>
+    <option value="MA - Public Policy">MA - Public Policy</option>
+    <option value="BBA - Business Analytics">BBA - Business Analytics</option>
+    <option value="MBA - Business Analytics">MBA - Business Analytics</option>
+    <option value="MBA - HR">MBA - HR</option>
+    <option value="MBA - Finance">MBA - Finance</option>
+    <option value="MBA - Marketing">MBA - Marketing</option>
+    <option value="MBA - IT">MBA - IT</option>
+    <option value="MBA - Retail Management">MBA - Retail Management</option>
+  </optgroup>
+
+  <optgroup label="Dr. MGR University, Chennai, Tamil Nadu">
+    <option value="MCA - Cloud Computing">MCA - Cloud Computing</option>
+    <option value="MCA - Full Stack Development">MCA - Full Stack Development</option>
+    <option value="MCA - AI & ML">MCA - AI & ML</option>
+    <option value="MCA - Data Analytics">MCA - Data Analytics</option>
+    <option value="M.Sc. - Mathematics">M.Sc. - Mathematics</option>
+    <option value="M.Sc. - Data Science">M.Sc. - Data Science</option>
+    <option value="MBA X">MBA X</option>
+    <option value="MBA Plus">MBA Plus</option>
+  </optgroup>
+
+  <optgroup label="Andhra University, Visakhapatnam, Andhra Pradesh">
+    <option value="MBA - Finance & Marketing">MBA - Finance & Marketing</option>
+    <option value="BCA">BCA</option>
+    <option value="BA - Economics">BA - Economics</option>
+    <option value="BA - English">BA - English</option>
+    <option value="BA - Political Science">BA - Political Science</option>
+    <option value="BA - Public Policy">BA - Public Policy</option>
+    <option value="BA - Psychology">BA - Psychology</option>
+  </optgroup>
+
+  <optgroup label="Kurukshetra University, Haryana">
+    <option value="BBA - Digital Marketing">BBA - Digital Marketing</option>
+    <option value="BBA - Retail Management">BBA - Retail Management</option>
+    <option value="BBA - Fintech">BBA - Fintech</option>
+    <option value="BCA - UX">BCA - UX</option>
+    <option value="BCA - Data Science">BCA - Data Science</option>
+    <option value="BCA - Cloud Technology">BCA - Cloud Technology</option>
+    <option value="BCA - Blockchain">BCA - Blockchain</option>
+    <option value="BCA - AI">BCA - AI</option>
+    <option value="MBA - Data Science">MBA - Data Science</option>
+  </optgroup>
+
+  <optgroup label="OP Jindal Global University, Sonipat, Haryana">
+    <option value="MBA - Finance">MBA - Finance</option>
+    <option value="MBA - HRM">MBA - HRM</option>
+    <option value="MBA - Marketing">MBA - Marketing</option>
+    <option value="MBA - Healthcare">MBA - Healthcare</option>
+    <option value="MBA - Agribusiness">MBA - Agribusiness</option>
+    <option value="MBA - IT">MBA - IT</option>
+    <option value="MBA - International Business">MBA - International Business</option>
+    <option value="MBA - Operations Management">MBA - Operations Management</option>
+  </optgroup>
+
+  <optgroup label="Vivekananda Global University, Jaipur, Rajasthan">
+    <option value="MBA - Healthcare and Hospital Management">MBA - Healthcare and Hospital Management</option>
+    <option value="MBA - Digital Marketing">MBA - Digital Marketing</option>
+    <option value="MBA - Entrepreneurship">MBA - Entrepreneurship</option>
+    <option value="MBA - Logistics & Supply Chain Management">MBA - Logistics & Supply Chain Management</option>
+    <option value="MCA - Artificial Intelligence">MCA - Artificial Intelligence</option>
+    <option value="MCA - Data Science">MCA - Data Science</option>
+  </optgroup>
+
+  <optgroup label="Bharathidasan University, Tiruchirapalli, Tamil Nadu">
+    <option value="MBA - HRM">MBA - HRM</option>
+    <option value="MBA - Finance">MBA - Finance</option>
+    <option value="MBA - Marketing">MBA - Marketing</option>
+    <option value="BBA - General">BBA - General</option>
+    <option value="M.Sc - Mathematics">M.Sc - Mathematics</option>
+  </optgroup>
+
+  <optgroup label="Centurion University, Gajapati, Odisha">
+    <option value="MCA - Data Science">MCA - Data Science</option>
+    <option value="MBA - Business Analytics">MBA - Business Analytics</option>
+    <option value="MBA - Healthcare and Hospital Management">MBA - Healthcare and Hospital Management</option>
+  </optgroup>
+
+  <optgroup label="Koneru Lakshmaiah Education Foundation, Andhra Pradesh">
+    <option value="BBA - Animation and VFX Management">BBA - Animation and VFX Management</option>
+    <option value="BCA - Gaming and Development">BCA - Gaming and Development</option>
+  </optgroup>
+
+  <optgroup label="Vignan University, Guntur, Andhra Pradesh">
+    <option value="BCA - Computer Science & IT">BCA - Computer Science & IT</option>
+    <option value="MCA - Computer Science & IT">MCA - Computer Science & IT</option>
+    <option value="MCA - Data Science">MCA - Data Science</option>
+  </optgroup>
+</select>
+
+        <!-- Add more courses here if needed -->
+    </select>
+</div>
+
+
+       <div class="form-group">
+    <label for="module">Preferred mode of Study:</label>
+    <select id="module" name="module" required>
+        <option value="" disabled selected>Select Your Preferred mode of Study </option>
+       <option value="Fully Online (Self-paced)">Fully Online (Self-paced)</option>
+<option value="Online with Live Classes">Online with Live Classes</option>
+<option value="Blended Learning (Online + Campus Visit)">Blended Learning (Online + Campus Visit/Internship)</option>
+<option value="On-Campus (Full-Time)">On-Campus (Full-Time)</option>
+       
+    </select>
+</div>
+
+<div class="form-group">
+    <label for="testDate">Select the Date of completion of the last Qualification:</label>
+    <input type="date" id="testDate" name="testDate" required min="2024-12-17" max="2024-12-17">
+</div>
+
+<div class="form-group">
+    <label for="testTime">Select the Test Time Slot:</label>
+    <select id="testTime" name="testTime" required>
+        <option value="" disabled selected>-- Select Time Slot --</option>
+        <option value="10AM-1PM">10 AM - 1 PM</option>
+    </select>
+</div>
+
+
+</div>
+
+       <div class="form-group">
+    <h3>Confirmations:</h3>
+
+    <!-- Confirmation 1 -->
+    <div>
+        <input type="checkbox" id="assignmentConfirmation" name="assignmentConfirmation" required>
+        <label for="assignmentConfirmation"> I have provided accurate and truthful information to the best of my knowledge
+.</label>
+    </div>
+
+    <!-- Confirmation 2 -->
+    <div>
+        <input type="checkbox" id="paymentConfirmation" name="paymentConfirmation" required>
+        <label for="paymentConfirmation">I am responsible for providing all required documents in a timely manner for processing my admission</label>
+    </div>
+
+    <!-- Confirmation 3 -->
+    <div>
+        <input type="checkbox" id="availabilityConfirmation" name="availabilityConfirmation" required>
+        <label for="availabilityConfirmation">I understand that the university will decide on my admission based on its rules, available seats, and whether I meet the required qualifications </label>
+    </div>
+</div>
+
+<!-- Submit Button -->
+        <button type="submit" id="submitBtn" disabled>Submit Application</button>
+    </form>
+</div>
+
+<script>
+    // Firebase configuration
+    const firebaseConfig = {
+        apiKey: "AIzaSyAnbPcqEU_dJjYXREg61kqaIJgUld-tUjE",
+  authDomain: "otp-ver-pr.firebaseapp.com",
+  projectId: "otp-ver-pr",
+  storageBucket: "otp-ver-pr.firebasestorage.app",
+  messagingSenderId: "440252952853",
+  appId: "1:440252952853:web:8fb5c9fa3ea6788bb7791c",
+  measurementId: "G-B7YSVKNGL5"
+    };
+
+    // Initialize Firebase
+    firebase.initializeApp(firebaseConfig);
+
+    let confirmationResult;
+    let appVerifier;
+
+    function sendOTP() {
+        const phoneNumber = document.getElementById('phone').value;
+
+        if (!phoneNumber) {
+            alert("Please enter a valid phone number.");
+            return;
+        }
+
+        // Initialize reCAPTCHA
+        if (!appVerifier) {
+            appVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+                size: 'invisible'
+            });
+        }
+
+        firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier)
+            .then((result) => {
+                confirmationResult = result;
+                document.getElementById("otpSection").style.display = "block";
+                alert("OTP sent. Please check sms on your phone.");
+            })
+            .catch((error) => {
+                console.error("Error sending OTP:", error);
+                document.getElementById('otpError').textContent = "Failed to send OTP. Please try again.";
+            });
+    }
+
+    function verifyOTP() {
+        const otp = document.getElementById('otp').value;
+
+        if (!otp) {
+            alert("Please enter the OTP.");
+            return;
+        }
+
+        confirmationResult.confirm(otp)
+            .then((result) => {
+                alert("Phone number verified successfully! You can proceed with form submission now ");
+                document.getElementById('otpError').textContent = ""; // Clear any previous errors
+                document.getElementById('otpSection').style.display = "none";
+                document.getElementById('phone').disabled = true;
+                document.querySelector('button[onclick="sendOTP()"]').disabled = true;
+                document.getElementById('submitBtn').disabled = false; // Enable submit button
+            })
+            .catch((error) => {
+                console.error("Error verifying OTP:", error);
+                document.getElementById('otpError').textContent = "Invalid OTP. Please try again.";
+            });
+    }
+
+    document.getElementById("teacherForm").addEventListener("submit", async function(event) {
+        event.preventDefault();
+        const formData = new FormData(event.target);
+
+        try {
+            const response = await fetch("https://script.google.com/macros/s/AKfycbyvgFBXuIedLVOylggoy5qYjkkTYL4SxzE8kQCFyj9VzowHMn8k9BK-DtKrgY7OBp0W/exec", { // Replace with your Web App URL
+                method: "POST",
+                body: formData
+            });
+            const result = await response.json();
+            if (result.status === 'success') {
+                alert("Form submitted successfully! We will contact you soon.");
+                event.target.reset();
+                // Reset the form and re-disable the submit button
+                document.getElementById('submitBtn').disabled = true;
+                document.getElementById('phone').disabled = false;
+                document.querySelector('button[onclick="sendOTP()"]').disabled = false;
+            } else {
+                alert("Error: " + result.message);
+            }
+        } catch (error) {
+            console.error("Error submitting form:", error);
+            alert("An error occurred while submitting the form. Please try again later.");
+        }
+    });
+</script>
+</body>
+</html>
