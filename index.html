@@ -377,7 +377,7 @@
                 alert("Phone number verified successfully! You can proceed with form submission now ");
                 document.getElementById('otpError').textContent = ""; // Clear any previous errors
                 document.getElementById('otpSection').style.display = "none";
-                document.getElementById('phone').disabled = true;
+                document.getElementById('phone').readOnly = true;
                 document.querySelector('button[onclick="sendOTP()"]').disabled = true;
                 document.getElementById('submitBtn').disabled = false; // Enable submit button
             })
