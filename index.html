@@ -281,10 +281,10 @@
 </div>
 
 <div class="form-group">
-    <label for="testTime">Select the Test Time Slot:</label>
+    <label for="testTime">Preferred Language of Instructions:</label>
     <select id="testTime" name="testTime" required>
-        <option value="" disabled selected>-- Select Time Slot --</option>
-        <option value="10AM-1PM">10 AM - 1 PM</option>
+        <option value="" disabled selected>-- Select Preferred Language --</option>
+        <option value="English">English</option>
     </select>
 </div>
 
@@ -392,7 +392,7 @@
         const formData = new FormData(event.target);
 
         try {
-            const response = await fetch("https://script.google.com/macros/s/AKfycbyvgFBXuIedLVOylggoy5qYjkkTYL4SxzE8kQCFyj9VzowHMn8k9BK-DtKrgY7OBp0W/exec", { // Replace with your Web App URL
+            const response = await fetch("https://script.google.com/macros/s/AKfycbzuoNnOosg7Kii1vwHOZEHIRLFW2DQ_30eGNyHnOl2ozBNQhOqSinlFxew8nAbo6CTM/exec", { // Replace with your Web App URL
                 method: "POST",
                 body: formData
             });
