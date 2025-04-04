@@ -316,6 +316,10 @@
 
 <!-- Submit Button -->
         <button type="submit" id="submitBtn" disabled>Submit Application</button>
+        <p id="loadingMessage" style="display: none; color: red; text-align: center; font-weight: bold;">
+  Please wait... your application is being submitted.
+</p>
+
     </form>
 </div>
 
@@ -386,6 +390,9 @@
                 document.getElementById('otpError').textContent = "Invalid OTP. Please try again.";
             });
     }
+// Show message when form is submitting
+document.getElementById('loadingMessage').style.display = 'block';
+
 
     document.getElementById("teacherForm").addEventListener("submit", async function(event) {
         event.preventDefault();
@@ -412,6 +419,8 @@
             alert("An error occurred while submitting the form. Please try again later.");
         }
     });
+    // Hide message after success or error
+document.getElementById('loadingMessage').style.display = 'none';
 </script>
 </body>
 </html>
